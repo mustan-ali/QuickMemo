@@ -5,10 +5,12 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 const userRoute = require("./routes/UserRoute");
+const noteRoute = require("./routes/NoteRoute");
 
 app.use(cors());
 app.use(express.json());
 app.use(userRoute);
+app.use(noteRoute);
 
 const ConnectDatabase = async () => {
   try {
