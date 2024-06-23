@@ -81,3 +81,48 @@ const getNotes = async (req, res) => {
         return res.status(500).json(error);
     }
 }
+
+
+const deleteNote = async (req, res) => {
+    const noteId = req.params.id;
+    const { user } = req.user;
+
+    try {
+        const note = await Note.findOne({ _id: noteId, user: user._id });
+
+        if (!note) {
+            return res.status(404).json({ error: true, message: "Note not found" });
+        }
+
+        await Note.deleteOne({ _id: noteId, user: user._id });
+
+        return res.json({ error: false, message: "Note deleted successfully" });
+
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
+
+
+const pinNote = async (req, res) => {
+    const noteId = req.params.id;
+    const { isPinned } = req.body;
+    const { user } = req.user;
+
+    try {
+        const note = await Note.findOne{ _id: noteId, user: user._id };
+
+        if (!note) {
+            return res.status(404).json({ error: true, message: "Note not found" });
+        }
+
+        note.isPinned = isPinned;
+
+        await note.save();
+
+        return res.json({ error: false, note, message: "Note pinned successfully" });
+
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
