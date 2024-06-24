@@ -76,4 +76,20 @@ const login = async (req, res) => {
 }
 
 
-module.exports = { createAccount, login };
+const getUser = async (req, res) => {
+    const { user } = req.user;
+
+    const isUser = await User.findOne({ _id: user._id });
+
+    if (!isUser) {
+        return res.status(400).json({ error: true, message: "User not found" });
+    }
+    // const { password, ...user } = isUser._doc;
+
+    // return res.status(200).json({ error: false, data });
+
+    return res.status(200).json({ user: { fullName: isUser.fullName, email: isUser.email, _id: isUser._id, createdOn: isUser.createdOn } });
+}
+
+
+module.exports = { createAccount, login, getUser };
