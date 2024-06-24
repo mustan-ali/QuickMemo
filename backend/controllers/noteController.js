@@ -110,7 +110,7 @@ const pinNote = async (req, res) => {
     const { user } = req.user;
 
     try {
-        const note = await Note.findOne({ _id: noteId, user: user._id });
+        const note = await Note.findOne({ _id: noteId, userId: user._id });
 
         if (!note) {
             return res.status(404).json({ error: true, message: "Note not found" });
