@@ -79,7 +79,7 @@ const login = async (req, res) => {
 const getUser = async (req, res) => {
     const { user } = req.user;
 
-    const isUser = await User.findOne({ _id: user._id });
+    const isUser = await User.findOne({ id: user._id });
 
     if (!isUser) {
         return res.status(400).json({ error: true, message: "User not found" });
