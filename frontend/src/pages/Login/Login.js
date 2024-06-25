@@ -1,9 +1,11 @@
 import { React, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import axiosInstance from "../../axiosConfig";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -21,10 +23,10 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!validateEmail(email)) {
-      setError("Enter a valid email address");
-      return;
-    }
+    // if (!validateEmail(email)) {
+    //   setError("Enter a valid email address");
+    //   return;
+    // }
 
     if (!password) {
       setError("Enter a password");
@@ -32,6 +34,26 @@ const Login = () => {
     }
 
     setError("");
+
+    try {
+      const response = await axiosInstance.post("/login", {
+        email: email,
+        password: password,
+      });
+
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem('token', response.data.accessToken);
+        navigate('/dashboard');
+      }
+    }
+    catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      }
+      else {
+        setError("An error occurred. Please try again later.");
+      }
+    }
   };
 
   return (
