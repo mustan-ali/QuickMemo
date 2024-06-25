@@ -25,16 +25,16 @@ const createAccount = async (req, res) => {
             return res.status(400).json({ error: true, message: "User with this email already exists" });
         }
 
-        const newUser = new User({ fullName, email, password });
-        await newUser.save();
+        const user = new User({ fullName, email, password });
+        await user.save();
 
-        const accessToken = jwt.sign({ newUser }, process.env.JWT_SECRET, {
+        const accessToken = jwt.sign({ user }, process.env.JWT_SECRET, {
             expiresIn: "30m",
         });
 
         return res.status(200).json({
             error: false,
-            newUser,
+            user,
             accessToken,
             message: "User created successfully",
         });
