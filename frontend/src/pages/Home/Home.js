@@ -16,6 +16,7 @@ const Home = () => {
 
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
+  const [notes, setNotes] = useState([]);
 
   const getUserInfo = async () => {
     try {
@@ -32,8 +33,21 @@ const Home = () => {
     }
   };
 
+  const getNotes = async () => {
+    try {
+      const response = await axiosInstance.get("/get-notes");
+      if (response.data && response.data.notes) {
+        setNotes(response.data.notes);
+      }
+    }
+    catch (error) {
+      console.error("An error occurred while fetching notes: ", error);
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
+    getNotes();
     // eslint-disable-next-line
   }, []);
 
@@ -43,16 +57,21 @@ const Home = () => {
 
       <div className="container mx-auto px-6 py-2">
         <div className="grid grid-cols-3 gap-4 mt-8">
-          <NoteCard
-            title="Test Note"
-            date="18th June 2024"
-            content="This is a test note"
-            tags="#Test"
-            isPinned={true}
-            onEdit={() => { }}
-            onDelete={() => { }}
-            onPinNote={() => { }}
-          />
+
+          {notes.map((item, index) => (
+            <NoteCard
+              key={item._id}
+              title={item.title}
+              date={item.date}
+              content={item.content}
+              tags={item.tags}
+              isPinned={item.isPinned}
+              onEdit={() => { }}
+              onDelete={() => { }}
+              onPinNote={() => { }}
+            />
+          ))}
+
         </div>
       </div>
 
