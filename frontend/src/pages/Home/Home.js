@@ -45,6 +45,22 @@ const Home = () => {
     }
   };
 
+  const handleEditNote = (noteDetail) => {
+    setOpenAddEditNote({ isShown: true, type: "edit", data: noteDetail });
+  }
+
+  const handleDeleteNote = async (noteDetail) => {
+    try {
+      const response = await axiosInstance.delete("/delete-note/" + noteDetail._id);
+      if (response.data && response.data.message) {
+        getNotes();
+      }
+    }
+    catch (error) {
+      console.error("An error occurred while deleting note: ", error);
+    }
+  }
+
   useEffect(() => {
     getUserInfo();
     getNotes();
@@ -66,8 +82,8 @@ const Home = () => {
               content={item.content}
               tags={item.tags}
               isPinned={item.isPinned}
-              onEdit={() => { }}
-              onDelete={() => { }}
+              onEdit={() => { handleEditNote(item) }}
+              onDelete={() => { handleDeleteNote(item) }}
               onPinNote={() => { }}
             />
           ))}
@@ -97,6 +113,7 @@ const Home = () => {
           onClose={() =>
             setOpenAddEditNote({ isShown: false, type: "add", data: null })
           }
+          getNotes={getNotes}
         />
       </Modal>
     </>

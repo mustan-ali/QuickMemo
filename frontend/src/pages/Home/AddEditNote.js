@@ -1,15 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdAdd, MdClose } from "react-icons/md";
+import axiosInstance from "../../axiosConfig";
 
-const AddEditNote = ({ noteData, type, onClose }) => {
+const AddEditNote = ({ data = {}, type, onClose, getNotes }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [inputTag, setInputTag] = useState("");
   const [tags, setTags] = useState([]);
   const [error, setError] = useState("");
 
-  const addNewNote = async () => {};
-  const editNote = async () => {};
+  useEffect(() => {
+    setTitle(data?.title || "");
+    setContent(data?.content || "");
+    setTags(data?.tags || []);
+  }, [data]);
+
+  const addNewNote = async () => {
+    try {
+      const response = await axiosInstance.post("/add-note", {
+        title,
+        content,
+        tags,
+      });
+      if (response.data && response.data.newNote) {
+        getNotes();
+        onClose();
+      }
+    }
+    catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      }
+    }
+  };
+
+  const editNote = async () => {
+    try {
+      const response = await axiosInstance.put("/edit-note/" + data._id, {
+        title,
+        content,
+        tags,
+      });
+      if (response.data && response.data.note) {
+        getNotes();
+        onClose();
+      }
+    }
+    catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      }
+    }
+  };
 
   const handleAddNote = () => {
     if (!title) {
@@ -116,7 +158,7 @@ const AddEditNote = ({ noteData, type, onClose }) => {
         className="btn-primary font-medium mt-5 p-3"
         onClick={handleAddNote}
       >
-        Add
+        {type === "add" ? "Add Note" : "Update Note"}
       </button>
     </div>
   );
