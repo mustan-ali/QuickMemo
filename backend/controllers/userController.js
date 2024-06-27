@@ -29,7 +29,7 @@ const createAccount = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ user }, process.env.JWT_SECRET, {
-            expiresIn: "30m",
+            expiresIn: "1d",
         });
 
         return res.status(200).json({
@@ -66,7 +66,7 @@ const login = async (req, res) => {
             return res.status(400).json({ error: true, message: "Password is incorrect" });
         }
 
-        const accessToken = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "30m" });
+        const accessToken = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
         return res.status(200).json({ error: false, email, accessToken, message: "Login successful" });
 
