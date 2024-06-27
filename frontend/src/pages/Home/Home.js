@@ -61,6 +61,20 @@ const Home = () => {
     }
   }
 
+  const handlePinNote = async (noteDetail) => {
+    try {
+      const response = await axiosInstance.put("/pin-note/" + noteDetail._id, {
+        isPinned: !noteDetail.isPinned
+      });
+      if (response.data && response.data.note) {
+        getNotes();
+      }
+    }
+    catch (error) {
+      console.error("An error occurred while pinning note: ", error);
+    }
+  }
+
   useEffect(() => {
     getUserInfo();
     getNotes();
@@ -84,7 +98,7 @@ const Home = () => {
               isPinned={item.isPinned}
               onEdit={() => { handleEditNote(item) }}
               onDelete={() => { handleDeleteNote(item) }}
-              onPinNote={() => { }}
+              onPinNote={() => { handlePinNote(item) }}
             />
           ))}
 
