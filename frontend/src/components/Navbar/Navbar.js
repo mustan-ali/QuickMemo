@@ -3,15 +3,20 @@ import ProfileInfo from "./ProfileInfo";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../SearchBar";
 
-const Navbar = ({ userInfo }) => {
+const Navbar = ({ userInfo, onSearch, onClearSearch }) => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const handleSearch = () => { };
+  const handleSearch = () => {
+    if (searchQuery) {
+      onSearch(searchQuery);
+    }
+  };
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    onClearSearch();
   };
 
   const handleLogout = () => {

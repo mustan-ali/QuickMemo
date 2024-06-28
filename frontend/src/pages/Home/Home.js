@@ -8,6 +8,7 @@ import axiosInstance from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import EmptyCard from "../../components/EmptyCard";
 import EmptyNoteImage from "../../assets/doc-add.svg";
+import EmptySearchImage from "../../assets/no-data.svg";
 
 const Home = () => {
   const [openAddEditNote, setOpenAddEditNote] = useState({
@@ -19,6 +20,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [isSearch, setIsSearch] = useState(false);
 
   const getUserInfo = async () => {
     try {
@@ -77,6 +79,27 @@ const Home = () => {
     }
   }
 
+  const handleSearchNotes = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-notes", {
+        params: { query }
+      });
+
+      if (response.data && response.data.notes) {
+        setNotes(response.data.notes);
+        setIsSearch(true);
+      }
+    }
+    catch (error) {
+      console.error("An error occurred while searching notes: ", error);
+    }
+  }
+
+  const handleClearSearch = () => {
+    setIsSearch(false);
+    getNotes();
+  }
+
   useEffect(() => {
     getUserInfo();
     getNotes();
@@ -85,7 +108,7 @@ const Home = () => {
 
   return (
     <>
-      <Navbar userInfo={userInfo} />
+      <Navbar userInfo={userInfo} onSearch={handleSearchNotes} onClearSearch={handleClearSearch} />
 
       <div className="container mx-auto px-6 py-2">
         {notes.length > 0 ?
@@ -104,7 +127,7 @@ const Home = () => {
               />
             ))}
           </div>
-          : <EmptyCard imgSrc={EmptyNoteImage} message="Start creating your first note! Click on the '+' button below to add a new note." />
+          : <EmptyCard imgSrc={isSearch ? EmptySearchImage : EmptyNoteImage} message={isSearch ? "No notes found matching your search." : "Start creating your first note! Click on the '+' button below to add a new note."} />
         }
       </div>
 
